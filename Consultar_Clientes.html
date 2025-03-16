@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Consultar Clientes</title>
+</head>
+<body>
+    <h1>Consultar Clientes</h1>
+    
+    <!-- Contenedor donde se mostrarán los clientes -->
+    <div id="clientes">
+        <p>Cargando clientes...</p>
+    </div>
+    
+    <!-- Botón para volver a la página principal -->
+    <button onclick="window.location.href='index.html'">Volver a Inicio</button>
+    
+    <script>
+        // Configurar credenciales para la autenticación básica
+        const usuario = "juan";
+        const contrasena = "2025";
+        const authHeader = "Basic " + btoa(usuario + ":" + contrasena);
+        
+        // Consultar la lista de clientes desde el servidor
+        fetch("http://localhost:5000/Clientes", {
+            headers: {
+                "Authorization": authHeader
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const divClientes = document.getElementById("clientes");
+            // Se asume que el servidor retorna { clientes: [...] }
+            if(data.clientes && data.clientes.length > 0) {
+                let html = "<ul>";
+                data.clientes.forEach(cliente => {
+                    html += `<li>ID: ${cliente.idCliente} - Nombre: ${cliente.Nombre}</li>`;
+                });
+                html += "</ul>";
+                divClientes.innerHTML = html;
+            } else {
+                divClientes.textContent = "No se encontraron clientes.";
+            }
+        })
+        .catch(error => {
+            document.getElementById("clientes").textContent = "Error: " + error.message;
+        });
+    </script>
+</body>
+</html>
